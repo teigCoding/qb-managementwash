@@ -1,5 +1,7 @@
 Video Preview: https://youtu.be/G00KYyNhuFQ
 
+Discord Support: https://discord.gg/mAFcFpamZ9
+
 # required scripts:
 qb-management
 
@@ -35,3 +37,5 @@ RegisterNetEvent('qb-bossmenu:client:SocietyMenu', function()
                 isMenuHeader = true,
                 icon = "fa-solid fa-circle-info",
             },
+
+
