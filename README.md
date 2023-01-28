@@ -1,4 +1,4 @@
-https://youtu.be/G00KYyNhuFQ
+Video Preview: https://youtu.be/G00KYyNhuFQ
 
 # required scripts:
 qb-management
