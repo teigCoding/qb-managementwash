@@ -8,9 +8,9 @@ qb-management
 # add this to (qb-management > client > cl_boss.lua)
 
                 {
-                    header = Lang:t("body.wash"),
+                    header = "Wash money",
                     icon = "fa-solid fa-money-bill-transfer",
-                    txt = Lang:t("body.washed"),
+                    txt = "Wash your markedbills",
                     params = {
                         event = "brp-vasking:client:startVask",
                         args = comma_value(cb)
