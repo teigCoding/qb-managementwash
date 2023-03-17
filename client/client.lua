@@ -63,41 +63,30 @@ RegisterNetEvent("brp-vasking:client:fullforVask",function(args)
 end)
 
 RegisterNetEvent("brp-vasking:client:startVask",function()
-
-        local dialog = exports['qb-input']:ShowInput({
-            header = Lang:t("label.header"),
-            submitText = Lang:t("label.send"),
-            inputs = {
-                {
-                    text = Lang:t("label.amount"),
-                    name = "washdata",
-                    type = "number",
-                    isRequired = true
+    
+    local dialog = exports['qb-input']:ShowInput({
+        header = Lang:t("label.header"),
+        submitText = Lang:t("label.send"),
+        inputs = {
+            {
+                text = Lang:t("label.method"), -- text you want to be displayed as a input header
+                name = "vaskemetode", -- name of the input should be unique otherwise it might override
+                type = "radio", -- type of the input - Radio is useful for "or" options e.g; billtype = Cash OR Bill OR bank
+                options = { -- The options (in this case for a radio) you want displayed, more than 6 is not recommended
+                    { value = Config.Options[1], text = Lang:t("label.option1"),checked = true}, -- Options MUST include a value and a text option
+                    { value = Config.Options[2], text = Lang:t("label.option2") }, -- Options MUST include a value and a text option
+                    { value = Config.Options[3], text = Lang:t("label.option3") }  -- Options MUST include a value and a text option
                 },
-                {
-                    text = Lang:t("label.method"), -- text you want to be displayed as a input header
-                    name = "vaskemetode", -- name of the input should be unique otherwise it might override
-                    type = "radio", -- type of the input - Radio is useful for "or" options e.g; billtype = Cash OR Bill OR bank
-                    options = { -- The options (in this case for a radio) you want displayed, more than 6 is not recommended
-                        { value = Config.Options[1], text = Lang:t("label.option1"),checked = true}, -- Options MUST include a value and a text option
-                        { value = Config.Options[2], text = Lang:t("label.option2") }, -- Options MUST include a value and a text option
-                        { value = Config.Options[3], text = Lang:t("label.option3") }  -- Options MUST include a value and a text option
-                    },
-                    -- default = "cash", -- Default radio option, must match a value from above, this is optional
-                },
-            }
-        })
+                -- default = "cash", -- Default radio option, must match a value from above, this is optional
+            },
+        }
+    })
 
-        if tonumber(dialog['washdata']) > 0 then
-            if QBCore.Functions.HasItem("markedbills",tonumber(dialog['washdata'])) then
-                QBCore.Functions.Notify(Lang:t("success.started_wash")..tonumber(dialog['washdata'])..Lang:t("success.wash_start"), "success")
-                TriggerServerEvent('brp-vasking:server:startVask', tonumber(dialog['washdata']),tonumber(dialog['vaskemetode']))
-            else
-                QBCore.Functions.Notify(Lang:t("error.not_enough"), "error")
-            end
-        else
-            QBCore.Functions.Notify(Lang:t("error.not_value"), "error")
-        end
+    if tonumber(dialog['vaskemetode']) then
+        TriggerServerEvent('brp-vasking:server:startVask',tonumber(dialog['vaskemetode']))
+    else
+        QBCore.Functions.Notify(Lang:t("error.not_value"), "error")
+    end
    
 
 end)

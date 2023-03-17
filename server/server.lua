@@ -1,30 +1,46 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
 
-RegisterNetEvent('brp-vasking:server:startVask', function(amount,percent)
+RegisterNetEvent('brp-vasking:server:startVask', function(percent)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local citizenid = Player.PlayerData.citizenid
     local currentTime = os.time()
-    Player.Functions.RemoveItem("markedbills", amount)
-    amount = amount * (1-percent)
     local howlong
+    local worth = 0
+    local amount = 0
 
-    if percent == Config.Options[1] then
-        howlong = Config.TimeWait[1]
-    elseif percent == Config.Options[2] then
-        howlong = Config.TimeWait[2]
-    elseif percent == Config.Options[3] then
-        howlong = Config.TimeWait[3]
-
+    for slot, data in pairs(Player.PlayerData.items) do
+        if data ~= nil then
+            if data.name == 'markedbills' then
+                worth = worth + (data.info.worth * data.amount)
+                amount = amount + data.amount
+                Player.Functions.RemoveItem('markedbills', data.amount)
+            end
+        end
     end
 
-    MySQL.Async.insert('INSERT INTO wash_database (citizenid, amount, time, howlong) VALUES (?, ?, ?, ?)', {
-        citizenid,
-        amount,
-        currentTime,
-        howlong,
-    })
+    if worth > 0 and amount > 0 then
+        worth = worth * (1-percent)
+
+        if percent == Config.Options[1] then
+            howlong = Config.TimeWait[1]
+        elseif percent == Config.Options[2] then
+            howlong = Config.TimeWait[2]
+        elseif percent == Config.Options[3] then
+            howlong = Config.TimeWait[3]
+
+        end
+
+        MySQL.Async.insert('INSERT INTO wash_database (citizenid, amount, time, howlong) VALUES (?, ?, ?, ?)', {
+            citizenid,
+            worth,
+            currentTime,
+            howlong,
+        })
+    else
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough"), "error")
+    end
 
 end)
 
