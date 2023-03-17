@@ -10,6 +10,10 @@ RegisterNetEvent('brp-vasking:server:startVask', function(percent)
     local worth = 0
     local amount = 0
 
+    if not Player.PlayerData.job.isboss then
+        return
+    end
+
     for slot, data in pairs(Player.PlayerData.items) do
         if data ~= nil then
             if data.name == 'markedbills' then
@@ -22,6 +26,7 @@ RegisterNetEvent('brp-vasking:server:startVask', function(percent)
 
     if worth > 0 and amount > 0 then
         worth = worth * (1-percent)
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("success.started_wash")..worth..Lang:t("success.wash_start"), "success")
 
         if percent == Config.Options[1] then
             howlong = Config.TimeWait[1]
@@ -29,7 +34,6 @@ RegisterNetEvent('brp-vasking:server:startVask', function(percent)
             howlong = Config.TimeWait[2]
         elseif percent == Config.Options[3] then
             howlong = Config.TimeWait[3]
-
         end
 
         MySQL.Async.insert('INSERT INTO wash_database (citizenid, amount, time, howlong) VALUES (?, ?, ?, ?)', {
@@ -71,6 +75,11 @@ RegisterNetEvent("brp-vasking:server:fullforVask",function(args)
     local currentTime = os.time()
     local timeDiff = currentTime - result[number].time
     local howLong = result[number].howlong
+
+    if not Player.PlayerData.job.isboss then
+        return
+    end
+
     if timeDiff >= howLong then
         TriggerClientEvent('QBCore:Notify', src, Lang:t("success.wash") ..result[number].amount.. "!", "success")
         MySQL.query('SELECT * FROM wash_database WHERE citizenid = ?', {citizenid}, function(result)
